@@ -1,17 +1,17 @@
 {
   "id": "raise-my-hand",
   "title": "✋ Raise My Hand",
-  "description": "Adds a 'Raise my hand' button that displays a small alert on GM screens that the player would like attention.",
+  "description": "A module to quickly determine whether each player is 'in' or 'out.'  Forked from Raise My hand by Mestre Digital (https://www.youtube.com/c/MestreDigital)",
   
   "authors": [
     {
-      "name": "Mestre Digital",
-      "url": "https://www.youtube.com/c/MestreDigital",
+      "name": "norc",
+      "url": "https://github.com/Norc",
       "flags": {}
     }
   ],
   
-  "version": "1.5.0",
+  "version": "0.0.1",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -28,21 +28,6 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
-    },
-    {
-      "lang": "pt-BR",
-      "name": "Português (Brasil)",
-      "path": "lang/pt-BR.json"
-    },
-    {
-      "lang": "fr",
-      "name": "Français",
-      "path": "lang/fr.json"
-    },
-    {
-      "lang": "de",
-      "name": "Deutsch",
-      "path": "lang/de.json"
     }
   ],
   
@@ -60,8 +45,7 @@
   
   "socket": true,
   
-  "url": "https://github.com/brunocalado/raise-my-hand-plus",
-  "manifest": "https://raw.githubusercontent.com/brunocalado/raise-my-hand-plus/main/module.json",
-  "download": "https://codeload.github.com/brunocalado/raise-my-hand-plus/zip/main"
-
+  "url": "https://github.com/norc/build-checker",
+  "manifest": "https://github.com/norc/build-checker/main/module.json",
+  "download": "https://codeload.github.com/norc/build-checker/main"
 }
