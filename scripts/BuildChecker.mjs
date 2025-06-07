@@ -1,9 +1,9 @@
-export default class HandRaiser {
+export default class BuildChecker {
 
   constructor() {
     this.isRaised = false;
     this.userId = game.userId;
-    this.moduleName = "raise-my-hand";
+    this.moduleName = "build-checker";
     
     // socketlib
     this.socket = socketlib.registerModule(this.moduleName);       	
