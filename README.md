@@ -1,98 +1,38 @@
-# ✋ Raise My Hand
-A player can click in the hand to request attention. There is also a X Button for X-Card by John Stavropoulos. 
+# Build Checker 
 
-## Raise my Hand Buttons
-<table>
-<thead>
-  <tr>
-    <th>
-      <p align="center">
-        <img width="700" src="assets/doc_buttons.webp">
-      </p>
-    </th>
-  </tr>
-</thead>
-</table> 
+A special-purpose fork of [Raise My Hand]https://github.com/brunocalado/raise-my-hand-plus by the excellent [brunocalado](https://github.com/brunocalado). 
+
+The eventual goal of this fork is to quickly poll whether all players are "in" or "out." When the timer expires, all players that are not "in" are "out." 
+
+## Build Checker Buttons
+Two buttons are planned:
+1. (Swinging Pick Icon) - I am building
+2. (X Icon) I am not building
 
 ## Keybindings
-<table>
-<thead>
-  <tr>
-    <th>
-      <p align="center">
-        <img width="700" src="assets/doc_keys.webp">
-      </p>
-    </th>
-  </tr>
-</thead>
-</table> 
+Planned keybindings will be `B` for Build and `N` for not build. 
+
+Optional: Might also try to bind a double-click on an empty spot on the map background as build, and double-right click as not building.
 
 ## Settings
-<table>
-<thead>
-  <tr>
-    <th>
-      <p align="center">
-        <img width="700" src="assets/doc_settings.webp">
-      </p>
-    </th>
-  </tr>
-</thead>
-</table> 
+Main planned setting is to be able to configure the amount of time for the countdown.
 
 ## Features
-- A small hand will appear next to the player name if you are in **Toogle Mode**.
-- A notification warning will be displayed. You can set to everyone or just GM users. You can make the notification persistent.
-- A sound will be played. You can set the sound and volume.
-- A message will be sent to the chat. It will get the user color. You can use player avatar as image. You can set to everyone or just GM users.
-- NOT WORKING ANYMORE! You can shake the screen. **Requires Fluid Canvas**.
-- Foundry VTT Keybind. Check Controls.
-- You can display a dialog with a image.
-- [X-Card by John Stavropoulos](https://docs.google.com/document/d/1SB0jsx34bWHZWbnNIVVuMjhDkrdFGo1_hSC2BWPlI3A/edit) 
-
-## Localization
-If you want to translate this module [DOWNLOAD THIS FILE](https://raw.githubusercontent.com/brunocalado/raise-my-hand-plus/main/lang/en.json) and translate it. After that open an issue sharing your translation. 
-
-You also need to share with me the default name convention for your language. This is very easy to get. 
-- Find a system or module which is translated to your language. 
-- Open the **module.json** or **system.json** file.
-- You should find something like the code above. It's under **languages**. Share with me **lang, name and path** for your language.
-```json
-{
-  "lang": "en",
-  "name": "English",
-  "path": "lang/en.json"
-},
-{
-    "lang": "fr",
-    "name": "Français",
-    "path": "lang/fr.json"
-}  
-```
-
-## Community
-- Do you found a bug? [Report it!](https://github.com/brunocalado/raise-my-hand-plus/issues)
-- Do you want to send a translation? [Send it!](https://github.com/brunocalado/raise-my-hand-plus/issues)
-
-# V11
-If you want to use this module on v11 you can download it from [here](https://github.com/brunocalado/raise-my-hand-plus/tree/172dc1da4db66871dd12fe168b82cb56cb759668). Click Code and download zip.
-
-# V12
-If you want to use this module on v12 you can download it from [here](https://github.com/brunocalado/raise-my-hand-plus/archive/7c16ec321080a57eedd4b8b9b9054b11d4a6649c.zip). Click Code and download zip.
+- A small pick icon will appear next to the player name if you are building
+- A small cross icon will appear next to the player name if you are not building
+- A (temporary) notification will be displayed to all users when someone decides to build (or not build)
+- A sound will be played. You can set the sound and volume. - maybe?
+- A message will be sent to the chat stating that the player is building (or not building).
 
 # Acknowledgements
-- henry-malinowski
+- Bruno is indebted to henry-malinowski for some reason, and therefore so am I.
 
 # License
 - Code: [LICENSE](https://github.com/brunocalado/raise-my-hand-plus/blob/main/LICENSE)
-- This module is a fork from (Raise My Hand): https://github.com/cswendrowski/FoundryVTT-Raise-My-Hand
+- This module is a fork from Raise My Hand Plus, which is in turn a fork from (Raise My Hand): https://github.com/cswendrowski/FoundryVTT-Raise-My-Hand
 - alarm sound: https://creativecommons.org/licenses/by/4.0/
 - hand sound: https://creativecommons.org/licenses/by/4.0/
-- [X-Card by John Stavropoulos](https://docs.google.com/document/d/1SB0jsx34bWHZWbnNIVVuMjhDkrdFGo1_hSC2BWPlI3A/edit)
-- X Card Designer: [Matheus Moreno Mota](https://www.instagram.com/matheus_mesmo/)
-<p align="center">
-  <img width="200" src="assets/capybara.webp">
-</p>
+- Pick icon: Courtesy of https://thenounproject.com/icon/pick-125990/. Edited and used under the [CC BY 3.0 license](https://creativecommons.org/licenses/by/3.0/).
 
 # Mestre Digital
-About this module creator: https://sites.google.com/view/mestredigitalmodules
+About the creator of the forked module: https://sites.google.com/view/mestredigitalmodules
