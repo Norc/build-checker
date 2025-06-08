@@ -47,7 +47,6 @@ export default class QuickVoter {
     
     // SHOW NOTIFICATION
     if (game.settings.get(this.moduleName, "showUiNotification")) {
-      let player = game.users.get(id);
       this.socket.executeForEveryone(this.sendNotification, player, voteChar);              
     } 
 
@@ -122,8 +121,16 @@ async resetVotes() {
     ui.notifications.notify(`${player.name} voted ${voteChar}!`); 
   }   
 
-  showVoteForEveryone(id,voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
-    $("[data-user-id='" + id + "'] > .player-name").append(`<span class='quick-vote-result'> voted ${voteChar}!</span>`);
+  showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
+    ui.notifications.notify(`#players-active ol.players-list li[data-user-id="${id}"]`);
+    const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="fREIQySrUDfgzJ9U"]`);
+    //TODO: add config setting for vote text for each possibility
+    let v = document.createElement('span');
+    v.classList.add('quick-vote-result');
+    v.textContent =`voted ${voteChar}!`;
+    playerLine.append(v);
+    //ui.players.render();
+    //$("[data-user-id='" + id + "'] > .player-name").append(`<span class='quick-vote-result'> voted ${voteChar}!</span>`);
   }   
 
   removeVoteForEveryone(id) {     //THIS WILL REMOVE THE VOTE INDICATOR
