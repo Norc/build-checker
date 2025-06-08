@@ -1,6 +1,6 @@
 {
-  "id": "quick-voter",
-  "title": "Quick Voter",
+  "id": "fvtt-quick-vote",
+  "title": "Quick Vote",
   "description": "Quickly poll all users, displaying each user's vote publicly. Users may vote Yes, No, or Other (typing in a custom response). Forked from Raise My hand by Mestre Digital (https://www.youtube.com/c/MestreDigital)",
   
   "authors": [

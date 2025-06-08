@@ -7,7 +7,7 @@ export default class QuickVoter {
     this.votedOther - false;
 
     this.userId = game.userId;
-    this.moduleName = "quick-voter";
+    this.moduleName = "fvtt-quick-vote";
     
 
     this.voteYesChar =  game.settings.get(this.moduleName, 'voteYesChar');
@@ -47,11 +47,11 @@ export default class QuickVoter {
         if (game.settings.get(this.moduleName, "chatMessageImageUserArt")) {
           imagePath = player.avatar;
         } else {
-          imagePath = game.settings.get("quick-voter", "chatimagepath");
+          imagePath = game.settings.get("fvtt-quick-vote", "chatimagepath");
         }
-        message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("quick-voter.CHATMESSAGE")}</label><p><img style="vertical-align:middle" src="${imagePath}" width="${chatImageWidth}%"></p>`; 
+        message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("fvtt-quick-vote.CHATMESSAGE")}</label><p><img style="vertical-align:middle" src="${imagePath}" width="${chatImageWidth}%"></p>`; 
       } else {
-        message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("quick-voter.CHATMESSAGE")}</label>`; 
+        message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("fvtt-quick-vote.CHATMESSAGE")}</label>`; 
       } 
       chatData = {
         speaker: null,
@@ -67,8 +67,8 @@ export default class QuickVoter {
       if (game.settings.get(this.moduleName, "playSoundGMOnly")) {
         userType = this.returnGMs(); // return the GMs IDs
       } 
-      const soundVolume = game.settings.get("quick-voter", "warningsoundvolume");
-      const mySound = game.settings.get("quick-voter", "warningsoundpath"); //const mySound = 'modules/quick-voter/assets/bell01.ogg';
+      const soundVolume = game.settings.get("fvtt-quick-vote", "warningsoundvolume");
+      const mySound = game.settings.get("fvtt-quick-vote", "warningsoundpath"); //const mySound = 'modules/fvtt-quick-vote/assets/bell01.ogg';
       /* ... second params
       * @param {object|boolean} socketOptions  Options which only apply when emitting playback over websocket.
       *                         As a boolean, emits (true) or does not emit (false) playback to all other clients
@@ -96,7 +96,7 @@ export default class QuickVoter {
   }
 
   sendNotification(player) {    
-    ui.notifications.notify(`${voteYesChar} ${player.name} ${game.i18n.localize("quick-voter.UINOTIFICATIONYES"), 'info'}!`); 
+    ui.notifications.notify(`${voteYesChar} ${player.name} ${game.i18n.localize("fvtt-quick-vote.UINOTIFICATIONYES"), 'info'}!`); 
   }   
 
   showVoteForEveryone(id) {       //THIS WILL ADD THE VOTE INDICATOR

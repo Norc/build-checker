@@ -207,7 +207,8 @@ Hooks.once('init', function() {
     hint: game.i18n.localize("quick-voter.settings.voteyeschar.hint"), // "You can set a path to the image displayed on the chat when a user votes yes."
     scope: 'world',
     config: true,
-    default: `<div class="icon-" style="font-family: icomoon;">build-pick</div>`,
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">build-pick</div>
+    default: "Y",
     type: String
   }); 
   
