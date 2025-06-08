@@ -1,7 +1,7 @@
 {
-  "id": "raise-my-hand",
-  "title": "✋ Raise My Hand",
-  "description": "A module to quickly determine whether each player is 'in' or 'out.'  Forked from Raise My hand by Mestre Digital (https://www.youtube.com/c/MestreDigital)",
+  "id": "quick-voter",
+  "title": "Quick Voter",
+  "description": "Quickly poll all users, displaying each user's vote publicly. Users may vote Yes, No, or Other (typing in a custom response). Forked from Raise My hand by Mestre Digital (https://www.youtube.com/c/MestreDigital)",
   
   "authors": [
     {
@@ -45,7 +45,7 @@
   
   "socket": true,
   
-  "url": "https://github.com/norc/build-checker",
-  "manifest": "https://github.com/norc/build-checker/main/module.json",
-  "download": "https://codeload.github.com/norc/build-checker/main"
+  "url": "https://github.com/norc/quick-voter",
+  "manifest": "https://github.com/norc/quick-voter/main/module.json",
+  "download": "https://codeload.github.com/norc/quick-voter/main"
 }

@@ -1,44 +1,61 @@
-const moduleName = 'build-checker';
-import BuildChecker from "./buildChecker.mjs";
+const moduleName = 'quick-voter';
+import QuickVoter from "./QuickVoter.mjs";
 
 Hooks.once("init", async function () {
-  // Report build
-  game.keybindings.register(moduleName, "Report Building", {
-    name: 'Report Building',
-    hint: 'Report you will be building',
-    editable: [{ key: "KeyH", modifiers: []}],
+  
+  // Vote yes
+  game.keybindings.register(moduleName, "Vote Yes", {
+    name: 'Vote Yes',
+    hint: 'Yea',
+    editable: [{ key: "KeyY", modifiers: []}],
     onDown: () => {
       //TODO: rename function
-      window.game.buildChecker.build();
+      window.game.quickVoter.voteYes();
     },
     onUp: () => {},
     restricted: false, 
     reservedModifiers: [],
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
-  // REport that you do not plan to build
-  game.keybindings.register(moduleName, "Report No Building", {
-    name: 'Report No Build',
-    hint: 'Report you will not be building',
-    editable: [{ key: "KeyX", modifiers: []}],
+
+  // Vote no
+  game.keybindings.register(moduleName, "Vote No", {
+    name: 'Vote No',
+    hint: 'Nay',
+    editable: [{ key: "KeyN", modifiers: []}],
     onDown: () => {
-      // TO DO: copy most of this function from buildCheker.build();
-      window.game.buildChecker.noBuild();
+      // TO DO: copy most of this function from quickVoter.voteYes();
+      window.game.quickVoter.voteNo();
     },
     onUp: () => {},
     restricted: false,
     reservedModifiers: [],
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   }); 
+
+  // Register custom vote
+  game.keybindings.register(moduleName, "Vote Other", {
+    name: 'Vote Other',
+    hint: 'Other',
+    editable: [{ key: "KeyO", modifiers: []}],
+    onDown: () => {
+      // TO DO: copy most of this function from quickVoter.voteYes();
+      window.game.quickVoter.voteOther();
+    },
+    onUp: () => {},
+    restricted: false,
+    reservedModifiers: [],
+    precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+  });
 });
 
 Hooks.once('init', function() {
-  let buildChecker = new buildChecker();
-  window.game.buildChecker = buildChecker;
+  let quickVoter = new quickVoter();
+  window.game.quickVoter = quickVoter;
 
   game.settings.register(moduleName, "showUiNotification", {
-    name: game.i18n.localize("build-checker.settings.showuinotification.name"), // "Should a raised hand display a UI notification when raised?",
-    hint: game.i18n.localize("build-checker.settings.showuinotification.hint"), // "Should a raised hand display a UI notification when raised?",    
+    name: game.i18n.localize("quick-voter.settings.showuinotification.name"), // "Should a new or changed vote display a UI notification?",
+    hint: game.i18n.localize("quick-voter.settings.showuinotification.hint"), // "Should a new or changed vote display a UI notification?",    
     scope: 'world',
     config: true,
     type: Boolean,
@@ -46,8 +63,8 @@ Hooks.once('init', function() {
   });
 
   game.settings.register(moduleName, "showUiChatMessage", {
-    name: game.i18n.localize("build-checker.settings.showuichatmessage.name"), // "Should a raised hand display a chat message when raised?"
-    hint: game.i18n.localize("build-checker.settings.showuichatmessage.hint"), // "Should a raised hand display a chat message when raised?"
+    name: game.i18n.localize("quick-voter.settings.showuichatmessage.name"), // "Should a new or changed vote display a chat message?"
+    hint: game.i18n.localize("quick-voter.settings.showuichatmessage.hint"), // "Should a new or changed vote display a chat message?"
     scope: 'world',
     config: true,
     type: Boolean,
@@ -55,28 +72,48 @@ Hooks.once('init', function() {
   });
 
   game.settings.register(moduleName, "showImageChatMessage", {
-    name: game.i18n.localize("build-checker.settings.showimagechatmessage.name"), // "Should a image be displayed with the chat message?"
-    hint: game.i18n.localize("build-checker.settings.showimagechatmessage.hint"), // "Should a image be displayed with the chat message?"
+    name: game.i18n.localize("quick-voter.settings.showimagechatmessage.name"), // "Should a image be displayed with the chat message?"
+    hint: game.i18n.localize("quick-voter.settings.showimagechatmessage.hint"), // "Should a image be displayed with the chat message?"
     scope: 'world',
     config: true,
     type: Boolean,
     default: true
   });
   
-  // call this with: game.settings.get("build-checker", "chatimagepath")
-  game.settings.register(moduleName, 'chatimagepath', {
-    name: game.i18n.localize("build-checker.settings.chatimagepath.name"), // Chat Image Path
-    hint: game.i18n.localize("build-checker.settings.chatimagepath.hint"), // "You can set a path to the image displayed on the chat."
+  game.settings.register(moduleName, 'chatImageYesPath', {
+    name: game.i18n.localize("quick-voter.settings.chatimageyespath.name"), // Chat Image Path(Yes Vote)
+    hint: game.i18n.localize("quick-voter.settings.chatimageyespath.hint"), // "You can set a path to the image displayed on the chat when a user votes yes."
     scope: 'world',
     config: true,
-    default: 'modules/build-checker/assets/hand.svg',
+    default: 'TODO:ADD IMAGE PATH',
     type: String,
     filePicker: 'imagevideo'
   }); 
+
+  game.settings.register(moduleName, 'chatImageNoPath', {
+    name: game.i18n.localize("quick-voter.settings.chatimagenopath.name"), // Chat Image Path (No Vote)
+    hint: game.i18n.localize("quick-voter.settings.chatimagenopath.hint"), // "You can set a path to the image displayed on the chat when a user votes no."
+    scope: 'world',
+    config: true,
+    default: 'TODO:ADD IMAGE PATH',
+    type: String,
+    filePicker: 'imagevideo'
+  }); 
+
+    game.settings.register(moduleName, 'chatImageOtherPath', {
+    name: game.i18n.localize("quick-voter.settings.chatimageotherpath.name"), // Chat Image Path (Other Vote)
+    hint: game.i18n.localize("quick-voter.settings.chatimageotherpath.hint"), // "You can set a path to the image displayed on the chat when a user registers an 'other' vote."
+    scope: 'world',
+    config: true,
+    default: 'TODO:ADD IMAGE PATH',
+    type: String,
+    filePicker: 'imagevideo'
+  }); 
+
   
-  game.settings.register(moduleName, 'chatimagewidth', {
-    name: game.i18n.localize("build-checker.settings.chatimagewidth.name"), // 'Chat Image Width'
-    hint: game.i18n.localize("build-checker.settings.chatimagewidth.hint"), // 'You can set the size of the custom image or player avatar. It is %'
+  game.settings.register(moduleName, 'chatImageWidth', {
+    name: game.i18n.localize("quick-voter.settings.chatimagewidth.name"), // 'Chat Image Width'
+    hint: game.i18n.localize("quick-voter.settings.chatimagewidth.hint"), // 'You can set the size of the custom image or player avatar. It is %'
     scope: 'world',
     config: true,
     default: 100,
@@ -89,8 +126,8 @@ Hooks.once('init', function() {
   }); 
 
   game.settings.register(moduleName, "chatMessageImageUserArt", {
-    name: game.i18n.localize("build-checker.settings.chatmessageimageuserart.name"), // "Should chat image be the user avatar?"
-    hint: game.i18n.localize("build-checker.settings.chatmessageimageuserart.name"), // 'This will use the user avatar as chat image instead of the default image.'
+    name: game.i18n.localize("quick-voter.settings.chatmessageimageuserart.name"), // "Should chat image be the user avatar?"
+    hint: game.i18n.localize("quick-voter.settings.chatmessageimageuserart.name"), // 'This will use the user avatar as chat image instead of the default image.'
     scope: 'world',
     config: true,
     type: Boolean,
@@ -98,38 +135,36 @@ Hooks.once('init', function() {
   });
   
   game.settings.register(moduleName, "playSound", {
-    name: game.i18n.localize("build-checker.settings.playsound.name"), // "Should a sound be played when asking for a build check?"
-    hint: game.i18n.localize("build-checker.settings.playsound.hint"), // 
+    name: game.i18n.localize("quick-voter.settings.playound.name"), // "Should a sound be played when the first vote is cast?"
+    hint: game.i18n.localize("quick-voter.settings.playsound.hint"), // "Should a sound be played when the first vote is cast?
     scope: 'world',
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register(moduleName, "playSoundCheckComplete", {
-    name: game.i18n.localize("build-checker.settings.playsoundgmonly.name"), // "Should a sound be played when the last person has voted?"
-    hint: game.i18n.localize("build-checker.settings.playsoundgmonly.hint"), // 
+  game.settings.register(moduleName, "playSoundVotingEnds", {
+    name: game.i18n.localize("quick-voter.settings.playsoundvotingends.name"), // "Should a sound be played when voting ends?"
+    hint: game.i18n.localize("quick-voter.settings.playsoundvotingends.hint"), // "Should a sound be played when voting ends?" 
     scope: 'world',
     config: true,
     type: Boolean,
     default: false
   });
   
-  // call this with: game.settings.get("build-checker", "warningsoundpath")
-  game.settings.register(moduleName, 'warningsoundpath', {
-    name: game.i18n.localize("build-checker.settings.warningsoundpath.name"), // 'Warning Sound Path'
-    hint: game.i18n.localize("build-checker.settings.warningsoundpath.hint"), // You can set a path to a sound you prefer.
+  game.settings.register(moduleName, 'votewarningsoundpath', {
+    name: game.i18n.localize("quick-voter.settings.warningsoundpath.name"), // 'Warning Sound Path'
+    hint: game.i18n.localize("quick-voter.settings.warningsoundpath.hint"), // You can set a path to a sound you prefer.
     scope: 'world',
     config: true,
-    default: 'modules/build-checker/assets/bell01.ogg',
+    default: 'modules/quick-voter/assets/bell01.ogg',
     type: String,
     filePicker: 'audio'
   });  
   
-  // call this with: game.settings.get("build-checker", "warningsoundvolume")
-  game.settings.register(moduleName, 'warningsoundvolume', {
-    name: game.i18n.localize("build-checker.settings.warningsoundvolume.name"), // "Warning Sound Volume"
-    hint: game.i18n.localize("build-checker.settings.warningsoundvolume.hint"), // "You can set the volume for the warning sound. Use 0.1 for 10% of the volume. 0.6 for 60% of the volume."
+  game.settings.register(moduleName, 'warningSoundVolume', {
+    name: game.i18n.localize("quick-voter.settings.warningsoundvolume.name"), // "Warning Sound Volume"
+    hint: game.i18n.localize("quick-voter.settings.warningsoundvolume.hint"), // "You can set the volume for the warning sound. Use 0.1 for 10% of the volume. 0.6 for 60% of the volume."
     scope: 'world',
     config: true,
     default: 0.6,
@@ -142,20 +177,18 @@ Hooks.once('init', function() {
   });
 
 
-  // call this with: game.settings.get("build-checker", "nobuildsound")
-  game.settings.register(moduleName, "nobuildsound", {
-    name: game.i18n.localize("build-checker.settings.xcardsound.name"), // "Should a sound be played when voting no?"
-    hint: game.i18n.localize("build-checker.settings.xcardsound.hint"), // 
+  game.settings.register(moduleName, "endVotingSound", {
+    name: game.i18n.localize("quick-voter.settings.endvoting.name"), // "Should a sound be played when voting no?"
+    hint: game.i18n.localize("quick-voter.settings.endvoting.hint"), // 
     scope: 'world',
     config: true,
     type: Boolean,
     default: true
   });  
 
-  // call this with: game.settings.get("build-checker", "nobuildsoundvolume")
-  game.settings.register(moduleName, 'nobuildsoundvolume', {
-    name: game.i18n.localize("build-checker.settings.xcardsoundvolume.name"),
-    hint: game.i18n.localize("build-checker.settings.xcardsoundvolume.hint"),
+  game.settings.register(moduleName, 'endVotingSoundVolume', {
+    name: game.i18n.localize("quick-voter.settings.endvotingsoundvolume.name"),
+    hint: game.i18n.localize("quick-voter.settings.endvotingsoundvolume.hint"),
     scope: 'world',
     config: true,
     default: 0.6,
@@ -168,26 +201,45 @@ Hooks.once('init', function() {
   });  
 });
 
-// buttons used to be added her on Hooks.on("getSceneControlButtons", but I guess they are added somewhere else now?
+  //set the character to use to indicate a Yes vote. By default, the string resolves to a custom font character.
+  game.settings.register(moduleName, 'voteYesChar', {
+    name: game.i18n.localize("quick-voter.settings.voteyeschar.name"), // Chat Image Path(Yes Vote)
+    hint: game.i18n.localize("quick-voter.settings.voteyeschar.hint"), // "You can set a path to the image displayed on the chat when a user votes yes."
+    scope: 'world',
+    config: true,
+    default: `<div class="icon-" style="font-family: icomoon;">build-pick</div>`,
+    type: String
+  }); 
+  
+//TODO: register custom font with Foundry VTT if it isn't added already!
 
 Hooks.on("getSceneControlButtons", function(controls) {
   let tileControls = controls['tokens'];
 
-  tileControls.tools['build-checker'] = {
-    icon: 'fas fa-hand-paper',
-    name: 'report-build',
-    title: 'Report Building',
+  tileControls.tools['quick-voter-yes'] = {
+    icon: 'fa-solid fa-check',
+    name: 'vote-yes',
+    title: 'Vote Yes',
     button: true,
-    onChange: () => window.game.buildChecker.toggle(),
+    onChange: () => window.game.quickVoter.voteYes(),
     visible: true,
   };
 
-  tileControls.tools['x-card'] = {
+  tileControls.tools['quick-voter-no'] = {
     icon: 'fas fa-times',
-    name: 'report-no',
-    title: 'Report no building',
+    name: 'vote-no',
+    title: 'Vote No',
     button: true,
-    onChange: () => window.game.buildChecker.showXCardDialogForEveryoneSocket(),
+    onChange: () => window.game.quickVoter.voteNo(),
+    visible: true,
+  };
+
+  tileControls.tools['quick-voter-other'] = {
+    icon: 'fa-regular fa-snowflake',
+    name: 'vote-other',
+    title: 'Vote Other',
+    button: true,
+    onChange: () => window.game.quickVoter.voteOther(),
     visible: true,
   };
 });
