@@ -9,8 +9,9 @@ export default class QuickVoter {
     this.userId = game.userId;
     this.moduleName = "fvtt-quick-vote";
     
-
-    this.voteYesChar =  game.settings.get(this.moduleName, 'voteYesChar');
+    //TODO: Fix this setting
+    //this.voteYesChar =  game.settings.get(this.moduleName, 'voteYesChar');
+    this.voteYesChar = "Y";
     this.voteNoChar = "TODO";
     this.voteOtherChar = "TODO";
 
