@@ -2,15 +2,17 @@ const moduleName = 'fvtt-quick-vote';
 import QuickVoter from "./QuickVoter.mjs";
 
 Hooks.once("init", async function () {
-  
-  // Vote yes
+
+  let quickVoter = new QuickVoter();
+  window.game.quickVoter = quickVoter;
+
+  // Add vote yes keybinding
   game.keybindings.register(moduleName, "Vote Yes", {
     name: 'Vote Yes',
     hint: 'Yea',
     editable: [{ key: "KeyY", modifiers: []}],
     onDown: () => {
-      //TODO: rename function
-      window.game.quickVoter.voteYes();
+      window.game.quickVoter.vote("votedYes");
     },
     onUp: () => {},
     restricted: false, 
@@ -18,14 +20,13 @@ Hooks.once("init", async function () {
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
 
-  // Vote no
+  // Add vote no keybinding
   game.keybindings.register(moduleName, "Vote No", {
     name: 'Vote No',
     hint: 'Nay',
     editable: [{ key: "KeyN", modifiers: []}],
     onDown: () => {
-      // TO DO: copy most of this function from quickVoter.voteYes();
-      window.game.quickVoter.voteNo();
+      window.game.quickVoter.vote("votedNo");
     },
     onUp: () => {},
     restricted: false,
@@ -33,14 +34,13 @@ Hooks.once("init", async function () {
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
   }); 
 
-  // Register custom vote
+  // Add vote "other" keybinding
   game.keybindings.register(moduleName, "Vote Other", {
     name: 'Vote Other',
     hint: 'Other',
     editable: [{ key: "KeyO", modifiers: []}],
     onDown: () => {
-      // TO DO: copy most of this function from quickVoter.voteYes();
-      window.game.quickVoter.voteOther();
+      window.game.quickVoter.vote("votedOther");
     },
     onUp: () => {},
     restricted: false,
@@ -50,8 +50,6 @@ Hooks.once("init", async function () {
 });
 
 Hooks.once('init', function() {
-  let quickVoter = new QuickVoter();
-  window.game.quickVoter = quickVoter;
 
   game.settings.register(moduleName, "showUiNotification", {
     name: game.i18n.localize("fvtt-quick-vote.settings.showuinotification.name"), // "Should a new or changed vote display a UI notification?",
@@ -152,7 +150,7 @@ Hooks.once('init', function() {
     default: false
   });
   
-  game.settings.register(moduleName, 'votewarningsoundpath', {
+  game.settings.register(moduleName, 'voteWarningSoundPath', {
     name: game.i18n.localize("fvtt-quick-vote.settings.warningsoundpath.name"), // 'Warning Sound Path'
     hint: game.i18n.localize("fvtt-quick-vote.settings.warningsoundpath.hint"), // You can set a path to a sound you prefer.
     scope: 'world',
@@ -162,7 +160,7 @@ Hooks.once('init', function() {
     filePicker: 'audio'
   });  
   
-  game.settings.register(moduleName, 'warningSoundVolume', {
+  game.settings.register(moduleName, 'voteWarningSoundVolume', {
     name: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.name"), // "Warning Sound Volume"
     hint: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.hint"), // "You can set the volume for the warning sound. Use 0.1 for 10% of the volume. 0.6 for 60% of the volume."
     scope: 'world',
@@ -202,10 +200,9 @@ Hooks.once('init', function() {
 
   //set the character to use to indicate a Yes vote. By default, the string resolves to a custom font character.
   game.settings.register(moduleName, 'voteYesChar', {
-    //name: game.i18n.localize("fvtt-quick-vote.settings.voteyeschar.name"), // Chat Image Path(Yes Vote)
-    //hint: game.i18n.localize("fvtt-quick-vote.settings.voteyeschar.hint"), // "You can set a path to the image displayed on the chat when a user votes yes."
-    name: 'voteYesChar',
-    hint: "Character to use to indicate a yes vote.",
+    //TODO: Localize
+    name: 'voteYesChar', // Y for testing purposes
+    hint: "Character to use to indicate a yes vote.", // Y for testing purposes
     scope: 'world',
     config: true,
     //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">build-pick</div>
@@ -214,7 +211,36 @@ Hooks.once('init', function() {
     filePicker: false,
     requiresReload: false
   }); 
+
+  //set the character to use to indicate a No vote. By default, the string resolves to a custom font character.
+  game.settings.register(moduleName, 'voteNoChar', {
+    //TODO: Localize
+    name: 'voteNoChar', // N for testing purposes
+    hint: "Character to use to indicate a no vote.", // N for testing purposes
+    scope: 'world',
+    config: true,
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">cross</div>
+    default: "N",
+    type: String,
+    filePicker: false,
+    requiresReload: false
+  }); 
+
+  //set the character to use to indicate an "other" vote. By default, the string resolves to a custom font character.
+  game.settings.register(moduleName, 'voteOtherChar', {
+    //TODO: Localize
+    name: 'voteOtherChar', // O for testing purposes
+    hint: "Character to use to indicate a yes vote.", // O for testing purposes
+    scope: 'world',
+    config: true,
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">snowflake</div>
+    default: "O",
+    type: String,
+    filePicker: false,
+    requiresReload: false
+  }); 
 });
+
   
 //TODO: register custom font with Foundry VTT if it isn't added already!
 
@@ -226,7 +252,7 @@ Hooks.on("getSceneControlButtons", function(controls) {
     name: 'vote-yes',
     title: 'Vote Yes',
     button: true,
-    onChange: () => window.game.quickVoter.voteYes(),
+    onChange: () => window.game.quickVoter.vote("votedYes"),
     visible: true,
   };
 
@@ -235,7 +261,7 @@ Hooks.on("getSceneControlButtons", function(controls) {
     name: 'vote-no',
     title: 'Vote No',
     button: true,
-    onChange: () => window.game.quickVoter.voteNo(),
+    onChange: () => window.game.quickVoter.vote("votedNo"),
     visible: true,
   };
 
@@ -244,7 +270,13 @@ Hooks.on("getSceneControlButtons", function(controls) {
     name: 'vote-other',
     title: 'Vote Other',
     button: true,
-    onChange: () => window.game.quickVoter.voteOther(),
+    onChange: () => window.game.quickVoter.vote("votedOther"),
     visible: true,
   };
+});
+
+
+Hooks.on("ready", async function() {
+  //reset all votes for a clean start
+  await window.game.quickVoter.resetVotes();
 });

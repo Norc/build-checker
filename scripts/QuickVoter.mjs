@@ -1,18 +1,13 @@
 export default class QuickVoter {
 
   constructor() {
-    this.hasVoted = false;
+    this.hasCurVotes = false;
     this.votedYes = false;
     this.votedNo = false;
     this.votedOther - false;
 
     this.userId = game.userId;
     this.moduleName = "fvtt-quick-vote";
-    
-  
-    this.voteYesChar = "";
-    this.voteNoChar = "";
-    this.voteOtherChar = "";
 
     // socketlib
     this.socket = socketlib.registerModule(this.moduleName);       	
@@ -21,26 +16,46 @@ export default class QuickVoter {
     this.socket.register("removeVoteForEveryone", this.removeVoteForEveryone);            // REMOVE VOTE INDICATOR FOR EVERYONE
   }
 
-  async voteYes() {
+  async vote(chosenOption) {
+    //by default accepts 'votedYes', 'votedNo', or 'votedOther'
     const id = this.userId;
     const player = game.users.get(id);
-    this.voteYesChar =  game.settings.get(this.moduleName,"voteYesChar");
+    let voteChar ="";
 
-    if (this.votedYes) return;    
-    this.votedYes = true;
-    this.socket.executeForEveryone(this.showVoteForEveryone, id);               
+    switch (chosenOption) {
+      case "votedYes":
+        voteChar =  await game.settings.get(this.moduleName,"voteYesChar");
+        break;
+      case "votedNo": 
+        voteChar =  await game.settings.get(this.moduleName,"voteNoChar");
+        break;
+      case "votedOther": 
+        voteChar =  await game.settings.get(this.moduleName,"voteOtherChar");
+        break;  
+      default:
+        ui.notifications.error(`Quick Vote | Unexpected vote ${chosenOption} encountered.`);
+        return;
+    }
+
+    await player.setFlag("fvtt-quick-vote", "hasVoted", true);
+    await player.setFlag("fvtt-quick-vote", chosenOption, true);
+
+    //if (this.votedYes) return;    
+    //TODO: record the yes vote for this individual user
+    //this.votedYes = true;
+    this.socket.executeForEveryone(this.showVoteForEveryone, id, voteChar);               
     
     // SHOW NOTIFICATION
     if (game.settings.get(this.moduleName, "showUiNotification")) {
       let player = game.users.get(id);
-      this.socket.executeForEveryone(this.sendNotification, player);              
+      this.socket.executeForEveryone(this.sendNotification, player, voteChar);              
     } 
 
     // ======================================
     // CHAT
     if (game.settings.get(this.moduleName, "showUiChatMessage")) {
       let imagePath;
-      let chatImageWidth = game.settings.get(this.moduleName, "chatImageWwidth");
+      let chatImageWidth = game.settings.get(this.moduleName, "chatImageWidth");
       let chatData;
       const showImageChatMessage = game.settings.get(this.moduleName, "showImageChatMessage");
       let message='';
@@ -57,19 +72,14 @@ export default class QuickVoter {
       chatData = {
         speaker: null,
         content: message
-      }; // voted yes      
-
+      };    
       ChatMessage.create(chatData, {});
     } // END CHAT
   
     // SOUND
     if (game.settings.get(this.moduleName, "playSound")) {
-      let userType = true;
-      if (game.settings.get(this.moduleName, "playSoundGMOnly")) {
-        userType = this.returnGMs(); // return the GMs IDs
-      } 
-      const soundVolume = game.settings.get("fvtt-quick-vote", "warningsoundvolume");
-      const mySound = game.settings.get("fvtt-quick-vote", "warningsoundpath"); //const mySound = 'modules/fvtt-quick-vote/assets/bell01.ogg';
+      const soundVolume = game.settings.get("fvtt-quick-vote", "voteWarningSoundVolume");
+      const mySound = game.settings.get("fvtt-quick-vote", "voteWarningSoundPath"); //const mySound = 'modules/fvtt-quick-vote/assets/bell01.ogg';
       /* ... second params
       * @param {object|boolean} socketOptions  Options which only apply when emitting playback over websocket.
       *                         As a boolean, emits (true) or does not emit (false) playback to all other clients
@@ -82,11 +92,22 @@ export default class QuickVoter {
         volume: soundVolume,
         autoplay: true,
         loop: false
-      }, userType);
+      },true);
     } // END SOUND
 
-  } // vote yes end ----------------------------------
+  } // vote end ----------------------------------
   
+async resetVotes() {
+  //TODO: add way to call from settings or for a GM to controls?
+  game.users.contents.forEach(async u => {
+    await u.setFlag("fvtt-quick-vote","votedYes",false);
+    await u.setFlag("fvtt-quick-vote","votedNo",false);
+    await u.setFlag("fvtt-quick-vote","votedOther",false);
+    await u.setFlag("fvtt-quick-vote","hasVoted",false);
+  });
+  this.hasCurVotes=false;
+}
+
   //-----------------------------------------------
   // Remove Vote Indicator
   removeVote() {
@@ -96,12 +117,13 @@ export default class QuickVoter {
     this.socket.executeForEveryone(this.removeVoteForEveryone, id);              
   }
 
-  sendNotification(player) {    
-    ui.notifications.notify(`${game.settings.get("fvtt-quick-vote","voteYesChar")} ${player.name} ${game.i18n.localize("fvtt-quick-vote.UINOTIFICATIONYES"), 'info'}!`); 
+  sendNotification(player,voteChar) {    
+    //TODO: localize
+    ui.notifications.notify(`${player.name} voted ${voteChar}!`); 
   }   
 
-  showVoteForEveryone(id) {       //THIS WILL ADD THE VOTE INDICATOR
-    $("[data-user-id='" + id + "'] > .player-name").append("<span class='quick-vote-result'>voteYesChar</span>");
+  showVoteForEveryone(id,voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
+    $("[data-user-id='" + id + "'] > .player-name").append(`<span class='quick-vote-result'> voted ${voteChar}!</span>`);
   }   
 
   removeVoteForEveryone(id) {     //THIS WILL REMOVE THE VOTE INDICATOR
