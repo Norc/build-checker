@@ -9,11 +9,10 @@ export default class QuickVoter {
     this.userId = game.userId;
     this.moduleName = "fvtt-quick-vote";
     
-    //TODO: Fix this setting
-    //this.voteYesChar =  game.settings.get(this.moduleName, 'voteYesChar');
-    this.voteYesChar = "Y";
-    this.voteNoChar = "TODO";
-    this.voteOtherChar = "TODO";
+  
+    this.voteYesChar = "";
+    this.voteNoChar = "";
+    this.voteOtherChar = "";
 
     // socketlib
     this.socket = socketlib.registerModule(this.moduleName);       	
@@ -25,9 +24,10 @@ export default class QuickVoter {
   async voteYes() {
     const id = this.userId;
     const player = game.users.get(id);
-          
-    if (this.voteYes) return;    
-    this.voteYes = true;
+    this.voteYesChar =  game.settings.get(this.moduleName,"voteYesChar");
+
+    if (this.votedYes) return;    
+    this.votedYes = true;
     this.socket.executeForEveryone(this.showVoteForEveryone, id);               
     
     // SHOW NOTIFICATION
@@ -40,7 +40,7 @@ export default class QuickVoter {
     // CHAT
     if (game.settings.get(this.moduleName, "showUiChatMessage")) {
       let imagePath;
-      let chatImageWidth = game.settings.get(this.moduleName, "chatimagewidth");
+      let chatImageWidth = game.settings.get(this.moduleName, "chatImageWwidth");
       let chatData;
       const showImageChatMessage = game.settings.get(this.moduleName, "showImageChatMessage");
       let message='';
@@ -97,7 +97,7 @@ export default class QuickVoter {
   }
 
   sendNotification(player) {    
-    ui.notifications.notify(`${voteYesChar} ${player.name} ${game.i18n.localize("fvtt-quick-vote.UINOTIFICATIONYES"), 'info'}!`); 
+    ui.notifications.notify(`${game.settings.get("fvtt-quick-vote","voteYesChar")} ${player.name} ${game.i18n.localize("fvtt-quick-vote.UINOTIFICATIONYES"), 'info'}!`); 
   }   
 
   showVoteForEveryone(id) {       //THIS WILL ADD THE VOTE INDICATOR
