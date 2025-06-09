@@ -72,7 +72,7 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     type: Boolean,
-    default: false
+    default: true
   });
 
   game.settings.register(moduleName, "showUiChatMessage", {
@@ -81,16 +81,18 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     type: Boolean,
-    default: false
+    default: true
   });
 
+/* TODO: DELETE ME?
   game.settings.register(moduleName, "showImageChatMessage", {
     name: game.i18n.localize("fvtt-quick-vote.settings.showimagechatmessage.name"), // "Should a image be displayed with the chat message?"
     hint: game.i18n.localize("fvtt-quick-vote.settings.showimagechatmessage.hint"), // "Should a image be displayed with the chat message?"
     scope: 'world',
     config: true,
     type: Boolean,
-    default: true
+    default: false,
+    config: false
   });
   
   game.settings.register(moduleName, 'chatImageYesPath', {
@@ -100,7 +102,8 @@ Hooks.once('init', function() {
     config: true,
     default: 'TODO:ADD IMAGE PATH',
     type: String,
-    filePicker: 'imagevideo'
+    filePicker: 'imagevideo',
+    visible:false
   }); 
 
   game.settings.register(moduleName, 'chatImageNoPath', {
@@ -110,7 +113,8 @@ Hooks.once('init', function() {
     config: true,
     default: 'TODO:ADD IMAGE PATH',
     type: String,
-    filePicker: 'imagevideo'
+    filePicker: 'imagevideo',
+    visible:false
   }); 
 
     game.settings.register(moduleName, 'chatImageOtherPath', {
@@ -120,7 +124,8 @@ Hooks.once('init', function() {
     config: true,
     default: 'TODO:ADD IMAGE PATH',
     type: String,
-    filePicker: 'imagevideo'
+    filePicker: 'imagevideo',
+    visible:false
   }); 
 
   
@@ -135,7 +140,8 @@ Hooks.once('init', function() {
       max: 100,
       step: 5
     },    
-    type: Number
+    type: Number,
+    config: false
   }); 
 
   game.settings.register(moduleName, "chatMessageImageUserArt", {
@@ -144,27 +150,19 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     type: Boolean,
-    default: false
-  });
+    default: false,
+    config: false
+  });*/
   
   game.settings.register(moduleName, "playSound", {
-    name: game.i18n.localize("fvtt-quick-vote.settings.playound.name"), // "Should a sound be played when the first vote is cast?"
-    hint: game.i18n.localize("fvtt-quick-vote.settings.playsound.hint"), // "Should a sound be played when the first vote is cast?
+    name: game.i18n.localize("fvtt-quick-vote.settings.playsound.name"), // "Should a sound be played during voting?
+    hint: game.i18n.localize("fvtt-quick-vote.settings.playsound.hint"), 
     scope: 'world',
     config: true,
     type: Boolean,
     default: false
   });
 
-  game.settings.register(moduleName, "playSoundVotingEnds", {
-    name: game.i18n.localize("fvtt-quick-vote.settings.playsoundvotingends.name"), // "Should a sound be played when voting ends?"
-    hint: game.i18n.localize("fvtt-quick-vote.settings.playsoundvotingends.hint"), // "Should a sound be played when voting ends?" 
-    scope: 'world',
-    config: true,
-    type: Boolean,
-    default: false
-  });
-  
   game.settings.register(moduleName, 'voteWarningSoundPath', {
     name: game.i18n.localize("fvtt-quick-vote.settings.warningsoundpath.name"), // 'Warning Sound Path'
     hint: game.i18n.localize("fvtt-quick-vote.settings.warningsoundpath.hint"), // You can set a path to a sound you prefer.
@@ -174,7 +172,7 @@ Hooks.once('init', function() {
     type: String,
     filePicker: 'audio'
   });  
-  
+ 
   game.settings.register(moduleName, 'voteWarningSoundVolume', {
     name: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.name"), // "Warning Sound Volume"
     hint: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.hint"), // "You can set the volume for the warning sound. Use 0.1 for 10% of the volume. 0.6 for 60% of the volume."
@@ -189,19 +187,21 @@ Hooks.once('init', function() {
     type: Number
   });
 
-
-  game.settings.register(moduleName, "endVotingSound", {
-    name: game.i18n.localize("fvtt-quick-vote.settings.endvoting.name"), // "Should a sound be played when voting no?"
-    hint: game.i18n.localize("fvtt-quick-vote.settings.endvoting.hint"), // 
+/* TODO: NOT YET ADDED
+  game.settings.register(moduleName, "votingEndsSoundPath", {
+    name: game.i18n.localize("fvtt-quick-vote.settings.votingendssoundpath.name"), // "Should a sound be played when voting ends?"
+    hint: game.i18n.localize("fvtt-quick-vote.settings.votingendssoundpath.hint"), // "Should a sound be played when voting ends?" 
     scope: 'world',
     config: true,
-    type: Boolean,
-    default: true
-  });  
+    type: String,
+    filePicker: 'audio',
+    default: false,
+    config: false
+  });
 
-  game.settings.register(moduleName, 'endVotingSoundVolume', {
-    name: game.i18n.localize("fvtt-quick-vote.settings.endvotingsoundvolume.name"),
-    hint: game.i18n.localize("fvtt-quick-vote.settings.endvotingsoundvolume.hint"),
+  game.settings.register(moduleName, 'votingEndsSoundVolume', {
+    name: game.i18n.localize("fvtt-quick-vote.settings.votingendssoundvolume.name"),
+    hint: game.i18n.localize("fvtt-quick-vote.settings.votingendssoundvolume.hint"),
     scope: 'world',
     config: true,
     default: 0.6,
@@ -210,8 +210,11 @@ Hooks.once('init', function() {
       max: 1,
       step: 0.1
     },     
-    type: Number
-  });  
+    type: Number,
+    config: false
+  }); */
+
+
 
   //set the character to use to indicate a Yes vote. By default, the string resolves to a custom font character.
   game.settings.register(moduleName, 'voteYesChar', {
