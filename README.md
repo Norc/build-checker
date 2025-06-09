@@ -45,7 +45,7 @@ In approximate order of perceived usefulness:
 
 # Licensing
 ## Code 
-- [LICENSE](https://github.com/norc/fvtt-quick-voter/blob/main/LICENSE)
+- [LICENSE](https://github.com/norc/fvtt-quick-vote/blob/main/LICENSE)
 - This module is a fork from [Raise My Hand Plus](https://github.com/brunocalado/raise-my-hand-plus), which is in turn a fork from (Raise My Hand): https://github.com/cswendrowski/FoundryVTT-Raise-My-Hand
 ## Assets
 - alarm sound: https://creativecommons.org/licenses/by/4.0/

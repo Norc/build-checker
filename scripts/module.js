@@ -276,34 +276,44 @@ Hooks.once('init', function() {
   
 //TODO: register custom font with Foundry VTT if it isn't added already!
 
-Hooks.on("getSceneControlButtons", function(controls) {
-  let tileControls = controls['tokens'];
+Hooks.on("getSceneControlButtons", controls => {
   //TODO: Add setting to control whether these should be added
-  tileControls.tools['fvtt-quick-vote-yes'] = {
-    icon: 'fa-solid fa-check',
-    name: 'vote-yes',
+
+
+  controls.tokens.tools.quickVoteYes = {
+    name: 'quickVoteYes',
     title: 'Vote Yes',
-    button: true,
-    onChange: () => window.game.quickVoter.vote("votedYes"),
+    icon: 'fa-solid fa-check',
     visible: true,
+    button: true,
+    onChange: async (event,toggled) => await window.game.quickVoter.vote("votedYes")
   };
 
-  tileControls.tools['fvtt-quick-vote-no'] = {
-    icon: 'fas fa-times',
-    name: 'vote-no',
+  controls.tokens.tools.quickVoteNo = {
+    name: 'quickVoteNo',
     title: 'Vote No',
-    button: true,
-    onChange: () => window.game.quickVoter.vote("votedNo"),
+    icon: 'fas fa-times',
     visible: true,
+    button: true,
+    onChange: async () => await window.game.quickVoter.vote("votedNo")
   };
 
-  tileControls.tools['fvtt-quick-vote-other'] = {
-    icon: 'fa-regular fa-snowflake',
-    name: 'vote-other',
+  controls.tokens.tools.quickVoteOther = {
+    name: 'quickVoteOther',
     title: 'Vote Other',
-    button: true,
-    onChange: () => window.game.quickVoter.vote("votedOther"),
+    icon: 'fas fa-snowflake',
     visible: true,
+    button: true,
+    onChange: async () => await window.game.quickVoter.vote("votedOther")
+  };
+
+  controls.tokens.tools.quickVoteBuilding = {
+    name: 'quickVoteBuilding',
+    title: 'Vote Other',
+    icon: 'fa-solid fa-hammer',
+    visible: true,
+    button: true,
+    onChange: async () => await window.game.quickVoter.vote("votedBuilding")
   };
 });
 

@@ -45,7 +45,7 @@
   
   "socket": true,
   
-  "url": "https://github.com/norc/quick-voter",
-  "manifest": "https://github.com/norc/quick-voter/main/module.json",
-  "download": "https://codeload.github.com/norc/quick-voter/main"
+  "url": "https://github.com/norc/fvtt-quick-vote",
+  "manifest": "https://github.com/norc/fvtt-quick-vote/main/module.json",
+  "download": "https://codeload.github.com/norc/fvtt-quick-vote/main"
 }
