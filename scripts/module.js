@@ -47,6 +47,21 @@ Hooks.once("init", async function () {
     reservedModifiers: [],
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
   });
+
+  // TODO: move logic so that Founders of Ember extends this module 
+  // Add vote "building" keybinding
+  game.keybindings.register(moduleName, "Vote Building", {
+    name: 'Vote Building',
+    hint: 'Other',
+    editable: [{ key: "KeyB", modifiers: []}],
+    onDown: () => {
+      window.game.quickVoter.vote("votedBuilding");
+    },
+    onUp: () => {},
+    restricted: false,
+    reservedModifiers: [],
+    precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+  });
 });
 
 Hooks.once('init', function() {
@@ -205,7 +220,7 @@ Hooks.once('init', function() {
     hint: "Character to use to indicate a yes vote.", // Y for testing purposes
     scope: 'world',
     config: true,
-    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">build-pick</div>
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">check</div> (or a standard emoji check)
     default: "Y",
     type: String,
     filePicker: false,
@@ -219,7 +234,7 @@ Hooks.once('init', function() {
     hint: "Character to use to indicate a no vote.", // N for testing purposes
     scope: 'world',
     config: true,
-    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">cross</div>
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">cross</div> (or a standard emoji X)
     default: "N",
     type: String,
     filePicker: false,
@@ -233,20 +248,37 @@ Hooks.once('init', function() {
     hint: "Character to use to indicate a yes vote.", // O for testing purposes
     scope: 'world',
     config: true,
-    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">snowflake</div>
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">snowflake</div> (or a standard emoji snowflake or asterisk)
     default: "O",
+    type: String,
+    filePicker: false,
+    requiresReload: false
+  }); 
+
+  // TODO: move logic so that Founders of Ember extends this module
+  //set the character to use to indicate a "building" vote. By default, the string resolves to a custom font character.
+  game.settings.register(moduleName, 'voteBuildingChar', {
+    //TODO: Localize
+    name: 'voteBuildingChar', // B for testing purposes
+    hint: "Character to use to indicate a yes vote.", // B for testing purposes
+    scope: 'world',
+    config: true,
+    //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">build-pick</div>
+    default: "B",
     type: String,
     filePicker: false,
     requiresReload: false
   }); 
 });
 
+
+
   
 //TODO: register custom font with Foundry VTT if it isn't added already!
 
 Hooks.on("getSceneControlButtons", function(controls) {
   let tileControls = controls['tokens'];
-
+  //TODO: Add setting to control whether these should be added
   tileControls.tools['fvtt-quick-vote-yes'] = {
     icon: 'fa-solid fa-check',
     name: 'vote-yes',
