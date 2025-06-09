@@ -51,6 +51,10 @@
                 "name": "Play Sound",
                 "hint": "Controls whether any sounds are ever played by this module."
             },
+            "playsoundonvoteno": {
+                "name": "Play Sound on Vote No",
+                "hint": "Controls whether a sound is played when 'no' votes are cast."
+            },
             "warningsoundpath": {
                 "name": "Vote Warning Sound Path",
                 "hint": "You can set a path to a sound you prefer to play when some casts an important vote."

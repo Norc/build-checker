@@ -89,22 +89,28 @@ export default class QuickVoter {
     } // END CHAT
   
     // SOUND
+    //Play sound only if the client has voting sounds enabled
     if (game.settings.get(this.moduleName, "playSound")) {
-      const soundVolume = game.settings.get("fvtt-quick-vote", "voteWarningSoundVolume");
-      const mySound = game.settings.get("fvtt-quick-vote", "voteWarningSoundPath"); //const mySound = 'modules/fvtt-quick-vote/assets/bell01.ogg';
-      /* ... second params
-      * @param {object|boolean} socketOptions  Options which only apply when emitting playback over websocket.
-      *                         As a boolean, emits (true) or does not emit (false) playback to all other clients
-      *                         As an object, can configure which recipients should receive the event.
-      * @param {string[]} [socketOptions.recipients] An array of user IDs to push audio playback to. All users by default.
-      * create an array with gms ids
-      */      
-      foundry.audio.AudioHelper.play({
-        src: mySound,
-        volume: soundVolume,
-        autoplay: true,
-        loop: false
-      },true);
+      //Play the sound, except if the vote is "No" and "No" votes shouldn't play sounds
+      const playSoundOnNo = game.settings.get(this.moduleName, "playSoundOnVoteNo");
+      if ( !(playSoundOnNo === false && chosenOption === "votedNo") ) {
+        const soundVolume = game.settings.get("fvtt-quick-vote", "voteWarningSoundVolume");
+        const mySound = game.settings.get("fvtt-quick-vote", "voteWarningSoundPath"); //const mySound = 'modules/fvtt-quick-vote/assets/bell01.ogg';
+        /* ... second params
+        * @param {object|boolean} socketOptions  Options which only apply when emitting playback over websocket.
+        *                         As a boolean, emits (true) or does not emit (false) playback to all other clients
+        *                         As an object, can configure which recipients should receive the event.
+        * @param {string[]} [socketOptions.recipients] An array of user IDs to push audio playback to. All users by default.
+        * create an array with gms ids
+        */      
+        foundry.audio.AudioHelper.play({
+          src: mySound,
+          volume: soundVolume,
+          autoplay: true,
+          loop: false
+        },true);
+      }
+
     } // END SOUND
 
   //TODO: Record votes in a system data model

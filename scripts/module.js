@@ -69,7 +69,7 @@ Hooks.once('init', function() {
   game.settings.register(moduleName, "showUiNotification", {
     name: game.i18n.localize("fvtt-quick-vote.settings.showuinotification.name"), // "Should a new or changed vote display a UI notification?",
     hint: game.i18n.localize("fvtt-quick-vote.settings.showuinotification.hint"), // "Should a new or changed vote display a UI notification?",    
-    scope: 'world',
+    scope: 'client',
     config: true,
     type: Boolean,
     default: true
@@ -78,7 +78,7 @@ Hooks.once('init', function() {
   game.settings.register(moduleName, "showUiChatMessage", {
     name: game.i18n.localize("fvtt-quick-vote.settings.showuichatmessage.name"), // "Should a new or changed vote display a chat message?"
     hint: game.i18n.localize("fvtt-quick-vote.settings.showuichatmessage.hint"), // "Should a new or changed vote display a chat message?"
-    scope: 'world',
+    scope: 'client',
     config: true,
     type: Boolean,
     default: true
@@ -157,6 +157,16 @@ Hooks.once('init', function() {
   game.settings.register(moduleName, "playSound", {
     name: game.i18n.localize("fvtt-quick-vote.settings.playsound.name"), // "Should a sound be played during voting?
     hint: game.i18n.localize("fvtt-quick-vote.settings.playsound.hint"), 
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
+  });
+
+  //TODO: make this more configurable by controlling each notification type by vote type (using an Object User setting validated by the data model in its own menu)
+  game.settings.register(moduleName, "playSoundOnVoteNo", {
+    name: game.i18n.localize("fvtt-quick-vote.settings.playsoundonvoteno.name"), // "Should a sound be played when the player votes no?
+    hint: game.i18n.localize("fvtt-quick-vote.settings.playsoundonvoteno.hint"), 
     scope: 'world',
     config: true,
     type: Boolean,
@@ -176,7 +186,7 @@ Hooks.once('init', function() {
   game.settings.register(moduleName, 'voteWarningSoundVolume', {
     name: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.name"), // "Warning Sound Volume"
     hint: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.hint"), // "You can set the volume for the warning sound. Use 0.1 for 10% of the volume. 0.6 for 60% of the volume."
-    scope: 'world',
+    scope: 'client',
     config: true,
     default: 0.6,
     range: {
