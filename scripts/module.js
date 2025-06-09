@@ -66,19 +66,30 @@ Hooks.once("init", async function () {
 
 Hooks.once('init', function() {
 
+  //TODO: make notification settings more configurable per client
   game.settings.register(moduleName, "showUiNotification", {
     name: game.i18n.localize("fvtt-quick-vote.settings.showuinotification.name"), // "Should a new or changed vote display a UI notification?",
     hint: game.i18n.localize("fvtt-quick-vote.settings.showuinotification.hint"), // "Should a new or changed vote display a UI notification?",    
-    scope: 'client',
+    scope: 'world',
     config: true,
     type: Boolean,
     default: true
   });
 
+  //TODO: make this more configurable by controlling each notification type by vote type (using an Object User setting validated by the data model in its own menu)
+  game.settings.register(moduleName, "notifyOnVoteNo", {
+    name: game.i18n.localize("fvtt-quick-vote.settings.notifyonvoteno.name"), // "Should a notification be shown when a player votes no?
+    hint: game.i18n.localize("fvtt-quick-vote.settings.notifyonvoteno.hint"), 
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   game.settings.register(moduleName, "showUiChatMessage", {
     name: game.i18n.localize("fvtt-quick-vote.settings.showuichatmessage.name"), // "Should a new or changed vote display a chat message?"
     hint: game.i18n.localize("fvtt-quick-vote.settings.showuichatmessage.hint"), // "Should a new or changed vote display a chat message?"
-    scope: 'client',
+    scope: 'world',
     config: true,
     type: Boolean,
     default: true
@@ -157,7 +168,7 @@ Hooks.once('init', function() {
   game.settings.register(moduleName, "playSound", {
     name: game.i18n.localize("fvtt-quick-vote.settings.playsound.name"), // "Should a sound be played during voting?
     hint: game.i18n.localize("fvtt-quick-vote.settings.playsound.hint"), 
-    scope: 'client',
+    scope: 'world',
     config: true,
     type: Boolean,
     default: true

@@ -15,6 +15,10 @@
                 "name": "Display UI Notification",
                 "hint": "A UI notification will be displayed for all players."
             },
+            "notifyonvoteno": {
+                "name": "Show Notification on Vote No",
+                "hint": "Controls whether a notification is shown when 'no' votes are cast."
+            },
             "showuichatmessage": {
                 "name": "Show Chat Message",
                 "hint": "A chat message will be displayed."

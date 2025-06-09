@@ -57,9 +57,13 @@ export default class QuickVoter {
     this.socket.executeForEveryone(this.showVoteForEveryone, id, voteChar);               
     
     //TODO: Add fancy voted characters eventually
-    // SHOW NOTIFICATION
+    // SHOW NOTIFICATION (if showing notifications are enabled)
     if (game.settings.get(this.moduleName, "showUiNotification")) {
-      this.socket.executeForEveryone(this.sendNotification, player, chosenOption);              
+      //Show the notification, except if the vote is "No" and "No" votes shouldn't show notifications
+      const notifyOnNo = game.settings.get(this.moduleName, "notifyOnVoteNo");
+      if ( !(notifyOnNo === false && chosenOption === "votedNo") ) {
+       this.socket.executeForEveryone(this.sendNotification, player, chosenOption);
+      }              
     } 
 
     // ======================================
