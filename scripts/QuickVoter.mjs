@@ -121,9 +121,10 @@ async resetVotes() {
     ui.notifications.notify(`${player.name} voted ${voteChar}!`); 
   }   
 
-  showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
+showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     ui.notifications.notify(`#players-active ol.players-list li[data-user-id="${id}"]`);
-    const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="fREIQySrUDfgzJ9U"]`);
+    const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"]`);
+
     //TODO: add config setting for vote text for each possibility
     let v = document.createElement('span');
     v.classList.add('quick-vote-result');
