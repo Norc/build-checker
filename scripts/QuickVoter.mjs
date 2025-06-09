@@ -56,19 +56,21 @@ export default class QuickVoter {
     //TODO: record the vote for this individual user in the system data model
     this.socket.executeForEveryone(this.showVoteForEveryone, id, voteChar);               
     
+    //TODO: Add fancy voted characters eventually
     // SHOW NOTIFICATION
     if (game.settings.get(this.moduleName, "showUiNotification")) {
-      this.socket.executeForEveryone(this.sendNotification, player, voteChar);              
+      this.socket.executeForEveryone(this.sendNotification, player, chosenOption);              
     } 
 
     // ======================================
     // CHAT
     if (game.settings.get(this.moduleName, "showUiChatMessage")) {
-      let imagePath;
-      let chatImageWidth = game.settings.get(this.moduleName, "chatImageWidth");
+      //let imagePath;
+      //let chatImageWidth = game.settings.get(this.moduleName, "chatImageWidth");
       let chatData;
-      const showImageChatMessage = game.settings.get(this.moduleName, "showImageChatMessage");
+      //const showImageChatMessage = game.settings.get(this.moduleName, "showImageChatMessage");
       let message='';
+      /* Hiding image stuff for now
       if (showImageChatMessage) {
         if (game.settings.get(this.moduleName, "chatMessageImageUserArt")) {
           imagePath = player.avatar;
@@ -76,9 +78,9 @@ export default class QuickVoter {
           imagePath = game.settings.get("fvtt-quick-vote", "chatimagepath");
         }
         message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("fvtt-quick-vote.CHATMESSAGE")}</label><p><img style="vertical-align:middle" src="${imagePath}" width="${chatImageWidth}%"></p>`; 
-      } else {
-        message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("fvtt-quick-vote.CHATMESSAGE")}</label>`; 
-      } 
+      } else { */
+        message += `${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenOption}`); 
+      //} 
       chatData = {
         speaker: null,
         content: message
@@ -129,9 +131,9 @@ async resetVotes() {
     this.socket.executeForEveryone(this.removeVoteForEveryone, id);              
   }
 
-  sendNotification(player,voteChar) {    
+  sendNotification(player,chosenOption) {    
     //TODO: localize
-    ui.notifications.notify(`${player.name} voted ${voteChar}!`); 
+    ui.notifications.notify( `${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenOption}`) ); 
   }   
 
 showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
@@ -140,7 +142,7 @@ showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     //TODO: add config setting for vote text for each possibility
     let v = document.createElement('span');
     v.classList.add('quick-vote-result');
-    v.textContent =`voted ${voteChar}!`;
+    v.textContent = ` ${voteChar}`;
     playerLine.append(v);
   }   
 

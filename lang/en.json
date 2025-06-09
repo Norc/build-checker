@@ -1,9 +1,9 @@
 {
     "fvtt-quick-vote": {
-        "UINOTIFICATION.votedYes": " voted Yes!",
-        "UINOTIFICATION.votedNo": " voted No!",
-        "UINOTIFICATION.votedOther": " voted for the Other option!",
-        "UINOTIFICATION.votedBuilding": " is Building!",
+        "VOTEMESSAGE.votedYes": " voted Yes!",
+        "VOTEMESSAGE.votedNo": " voted No!",
+        "VOTEMESSAGE.votedOther": " voted for the Other option!",
+        "VOTEMESSAGE.votedBuilding": " is Building!",
 
         "CHATMESSAGE.votedYes": " voted Yes!",
         "CHATMESSAGE.votedNo": " voted No!",
