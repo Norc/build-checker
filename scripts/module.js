@@ -24,7 +24,7 @@ Hooks.once("init", async function () {
   game.keybindings.register(moduleName, "Vote No", {
     name: 'Vote No',
     hint: 'Nay',
-    editable: [{ key: "KeyN", modifiers: []}],
+    editable: [{ key: "KeyN", modifiers: []},{ key: "KeyX", modifiers: []}],
     onDown: () => {
       window.game.quickVoter.vote("votedNo");
     },
@@ -52,7 +52,7 @@ Hooks.once("init", async function () {
   // Add vote "building" keybinding
   game.keybindings.register(moduleName, "Vote Building", {
     name: 'Vote Building',
-    hint: 'Other',
+    hint: 'Building',
     editable: [{ key: "KeyB", modifiers: []}],
     onDown: () => {
       window.game.quickVoter.vote("votedBuilding");
@@ -245,7 +245,7 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">check</div> (or a standard emoji check)
-    default: "Y",
+    default: "✔️",
     type: String,
     filePicker: false,
     requiresReload: false
@@ -259,7 +259,7 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">cross</div> (or a standard emoji X)
-    default: "N",
+    default: "❌",
     type: String,
     filePicker: false,
     requiresReload: false
@@ -273,7 +273,7 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">snowflake</div> (or a standard emoji snowflake or asterisk)
-    default: "O",
+    default: "❄️",
     type: String,
     filePicker: false,
     requiresReload: false
@@ -288,7 +288,7 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">build-pick</div>
-    default: "B",
+    default: "Building! 🔨", //I don't really like the hammer alone. TODO: make Building! a fallback default option?
     type: String,
     filePicker: false,
     requiresReload: false
