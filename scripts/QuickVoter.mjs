@@ -122,17 +122,15 @@ export default class QuickVoter {
 
   } // vote end ----------------------------------
   
-async resetVotes() {
-  //TODO: clear in module data model instead
-
-  /*game.users.contents.forEach(async u => {
-    await u.setFlag("fvtt-quick-vote","votedYes",false);
-    await u.setFlag("fvtt-quick-vote","votedNo",false);
-    await u.setFlag("fvtt-quick-vote","votedOther",false);
-    await u.setFlag("fvtt-quick-vote","hasVoted",false);
-  }); */
-  this.hasCurVotes=false;
-}
+  async resetVotes() {
+    //TODO: clear in module data model instead
+    game.users.contents.forEach(async u => {
+      //check if has vote first
+      const prevVoteElement = document.querySelector(`#players-active ol.players-list > li[data-user-id="${u.id}"] > .quick-vote-result`);
+       if (prevVoteElement !== null) await this.removeVote(u.id);
+    });
+  //  this.hasCurVotes=false;
+  }
 
   //-----------------------------------------------
   // Remove Previous Vote
