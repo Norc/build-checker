@@ -12,7 +12,8 @@ export default class QuickVoter {
     this.socket = socketlib.registerModule(this.moduleName);       	
   	this.socket.register("sendNotification", this.sendNotification); 
     this.socket.register("showVoteForEveryone", this.showVoteForEveryone);                // SHOW VOTE INDICATOR FOR EVERYONE
-    this.socket.register("removeVoteForEveryone", this.removeVoteForEveryone);            // REMOVE VOTE INDICATOR FOR EVERYONE
+    this.socket.register("removeVoteForEveryone", this.removeVoteForEveryone);   // REMOVE VOTE INDICATOR FOR EVERYONE
+    this.socket.register("sendBuildCheckForEveryone", this.sendBuildCheckForEveryone);           
   }
 
   async vote(chosenOption) {
@@ -94,7 +95,7 @@ export default class QuickVoter {
   
     // SOUND
     //Play sound only if the client has voting sounds enabled
-    if (game.settings.get(this.moduleName, "playSound")) {
+   // if (game.settings.get(this.moduleName, "playSound")) {
       //Play the sound, except if the vote is "No" and "No" votes shouldn't play sounds
       const playSoundOnNo = game.settings.get(this.moduleName, "playSoundOnVoteNo");
       if ( !(playSoundOnNo === false && chosenOption === "votedNo") ) {
@@ -113,7 +114,7 @@ export default class QuickVoter {
           autoplay: true,
           loop: false
         },true);
-      }
+      //}
 
     } // END SOUND
 
@@ -124,13 +125,13 @@ export default class QuickVoter {
 async resetVotes() {
   //TODO: clear in module data model instead
 
-  /* game.users.contents.forEach(async u => {
+  /*game.users.contents.forEach(async u => {
     await u.setFlag("fvtt-quick-vote","votedYes",false);
     await u.setFlag("fvtt-quick-vote","votedNo",false);
     await u.setFlag("fvtt-quick-vote","votedOther",false);
     await u.setFlag("fvtt-quick-vote","hasVoted",false);
-  });
-  this.hasCurVotes=false; */
+  }); */
+  this.hasCurVotes=false;
 }
 
   //-----------------------------------------------
@@ -145,6 +146,10 @@ async resetVotes() {
     //TODO: localize
     ui.notifications.notify( `${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenOption}`) ); 
   }   
+
+  sendBuildCheckForEveryone() {
+    ui.notifications.notify("Are you building? Press 'B' or 'N'");
+  }
 
 showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"]`);
@@ -184,6 +189,23 @@ showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     
     // Retorna uma lista de nomes de usuário dos GMs conectados
     return connectedGMs.map(user => user.id);
+  }
+
+  async checkBuild() {
+    //send to everyone
+    await this.socket.executeForEveryone(this.sendBuildCheckForEveryone);
+    
+    //send to everyone
+   //Saw wood 3.wav https://freesound.org/people/Pagey1969/sounds/566040/
+    const soundVolume = game.settings.get("fvtt-quick-vote", "voteWarningSoundVolume");
+    const mySound = game.settings.get("fvtt-quick-vote", "buildingSoundPath");     
+    foundry.audio.AudioHelper.play({
+      src: mySound,
+      volume: soundVolume,
+      autoplay: true,
+      loop: false
+    },true);
+    
   }
 
 }

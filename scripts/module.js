@@ -193,6 +193,16 @@ Hooks.once('init', function() {
     type: String,
     filePicker: 'audio'
   });  
+
+  game.settings.register(moduleName, 'buildingSoundPath', {
+    name: game.i18n.localize("fvtt-quick-vote.settings.buildingsoundpath.name"), // 'Warning Sound Path'
+    hint: game.i18n.localize("fvtt-quick-vote.settings.buildingsoundpath.hint"), // You can set a path to a sound you prefer.
+    scope: 'world',
+    config: true,
+    default: 'modules/fvtt-quick-vote/assets/Freesound_Hand_Saw.ogg',
+    type: String,
+    filePicker: 'audio'
+  });  
  
   game.settings.register(moduleName, 'voteWarningSoundVolume', {
     name: game.i18n.localize("fvtt-quick-vote.settings.warningsoundvolume.name"), // "Warning Sound Volume"
@@ -342,7 +352,7 @@ Hooks.on("getSceneControlButtons", controls => {
 });
 
 
-Hooks.on("ready", async function() {
+//Hooks.on("ready", async function() {
   //reset all votes for a clean start
-  await window.game.quickVoter.resetVotes();
-});
+  //await window.game.quickVoter.resetVotes();
+//});

@@ -63,6 +63,10 @@
                 "name": "Vote Warning Sound Path",
                 "hint": "You can set a path to a sound you prefer to play when some casts an important vote."
             },
+            "buildingsoundpath": {
+                "name": "Building Check Sound Path",
+                "hint": "You can set a path to a sound you prefer to play when some performs a building check."
+            },
             "warningsoundvolume": {
                 "name": "Warning Sound Volume",
                 "hint": "You can set the volume for the sound that plays when an important vote is cast. Use 0.1 for 10% of the volume. 0.6 for 60% of the volume."
