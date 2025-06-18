@@ -10,7 +10,7 @@ export default class QuickVoter {
     // socketlib
     this.socket = socketlib.registerModule(this.moduleName);       	
   	this.socket.register("sendNotification", this.sendNotification); 
-    this.socket.register("showVoteForEveryone", this.showVoteForEveryone);                // SHOW VOTE INDICATOR FOR EVERYONE
+    this.socket.register("showVoteForEveryone", this.showVoteForEveryone);       // SHOW VOTE INDICATOR FOR EVERYONE
     this.socket.register("removeVoteForEveryone", this.removeVoteForEveryone);   // REMOVE VOTE INDICATOR FOR EVERYONE
     this.socket.register("sendBuildCheckForEveryone", this.sendBuildCheckForEveryone);           
   }
@@ -21,7 +21,7 @@ export default class QuickVoter {
 
     const id = this.userId;
     const player = game.users.get(id);
-    const prevVote = game.settings.get(this.moduleName,"userVote");
+    const prevVote = game.settings.get(this.moduleName,"userVote",id);
 
     //If the vote is the same as the previously chosen option, remove the current vote instead and exit
     //This allows voting for the same thing again to toggle off the vote
@@ -29,29 +29,12 @@ export default class QuickVoter {
     if(prevVote !== null) await this.removeVote(id);
     if (chosenVote === prevVote) return;
 
-    //Record vote
-    game.settings.set(this.moduleName, "userVote", chosenVote); 
+    // Record vote
+    // Troubleshooting v = Array.from(game.settings.storage.get("user")).filter(s=>(s.key==="fvtt-quick-vote") )
+    await game.settings.set(this.moduleName, "userVote", chosenVote); 
 
     // Find the appropriate user-facing label for the chosen vote option
-    let voteChar ="";
-    switch (chosenVote) {
-      case "votedYes":
-        voteChar =  await game.settings.get(this.moduleName,"voteYesChar");
-        break;
-      case "votedNo": 
-        voteChar =  await game.settings.get(this.moduleName,"voteNoChar");
-        break;
-      case "votedOther": 
-        voteChar =  await game.settings.get(this.moduleName,"voteOtherChar");      
-        break;  
-      //TODO: move votedBuilding into Founders of Ember, extending this module if present.  
-      case "votedBuilding": 
-        voteChar =  await game.settings.get(this.moduleName,"voteBuildingChar");
-        break;  
-      default:
-        ui.notifications.error(`Quick Vote | Unexpected vote ${chosenVote} encountered.`);
-        return;
-    }
+    let voteChar = await this.getVoteChar(chosenVote);
  
     //TODO: record the vote for this individual user in the system data model
     this.socket.executeForEveryone(this.showVoteForEveryone, id, voteChar);               
@@ -117,7 +100,18 @@ export default class QuickVoter {
 
     } // END SOUND
 
-  //TODO: Record votes in a system data model
+  // Check if this is the last vote  
+  let us = Array.from(game.settings.storage.get("user") );
+  let votes = us.filter( s => (s.key ===`${this.moduleName}.userVote` && s.value !== null) );
+  //TODO: add better active user handling
+  console.log("Quick Vote | Vote registered!");
+  console.log(votes);
+  console.log(votes.length);
+  let players = game.users.filter(u=>u.active);
+  console.log(players);
+  console.log(players.length);
+
+  if (votes.length === players.length) ui.notifications.notify("Quick Vote | Everyone has voted!");
 
   } // vote end ----------------------------------
   
@@ -125,16 +119,50 @@ export default class QuickVoter {
     //TODO: clear votes in user settings also
     game.users.contents.forEach(async u => {
       //check if has vote first
-      const prevVoteElement = document.querySelector(`#players-active ol.players-list > li[data-user-id="${u.id}"] > .quick-vote-result`);
-       if (prevVoteElement !== null) await this.removeVote(u.id);
+      const uVote = Array.from(game.settings.storage.get("user")).filter(s=>(s.key==="fvtt-quick-vote.userVote" && s.user === u.id) );
+      console.log(`Quick Vote | The user ${u.id} voted ${uVote}`)
+      console.log (uVote) 
+      if ( uVote !== null) await this.removeVote(u.id);
     });
   }
 
   //-----------------------------------------------
   // Remove Previous Vote
   async removeVote(id) {
-    game.settings.set(this.moduleName, "userVote", null);
+    console.log(`Quick Vote | Attempting to remove a vote for ${id}`)
     this.socket.executeForEveryone(this.removeVoteForEveryone, id);              
+  }
+
+  async getVoteChar(chosenVote) {
+    let voteChar ="";
+    switch (chosenVote) {
+      case "votedYes":
+        voteChar =  await game.settings.get(this.moduleName,"voteYesChar");
+        break;
+      case "votedNo": 
+        voteChar =  await game.settings.get(this.moduleName,"voteNoChar");
+        break;
+      case "votedOther": 
+        voteChar =  await game.settings.get(this.moduleName,"voteOtherChar");      
+        break;  
+      //TODO: move votedBuilding into Founders of Ember, extending this module if present.  
+      case "votedBuilding": 
+        voteChar =  await game.settings.get(this.moduleName,"voteBuildingChar");
+        break;  
+      default:
+        ui.notifications.error(`Quick Vote | Unexpected vote ${chosenVote} encountered.`);
+        return;
+    }
+    return voteChar;
+  }
+
+
+  async addVoteElement(id, chosenVote) {
+    const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"]`);
+    const e = document.createElement('span');
+    e.classList.add('quick-vote-result');
+    e.textContent = await this.getVoteChar(chosenVote);
+    playerLine.append(e);
   }
 
   sendNotification(player,chosenVote) {    
@@ -146,7 +174,7 @@ export default class QuickVoter {
     ui.notifications.notify("Are you building? Press 'B' or 'N'");
   }
 
-showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
+  showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"]`);
 
     //TODO: add config setting for vote text for each possibility
@@ -156,7 +184,11 @@ showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     playerLine.append(v);
   }   
 
-  removeVoteForEveryone(id) {     //THIS WILL REMOVE THE VOTE INDICATOR IF ONE IS PRESENT
+  async removeVoteForEveryone(id) {     //THIS WILL REMOVE THE VOTE INDICATOR IF ONE IS PRESENT
+    if (game.settings.get("fvtt-quick-vote", "userVote", id) !==null) {
+      console.log(`Quick Vote | Removing a vote from user ${id}`)
+      await game.settings.set("fvtt-quick-vote", "userVote", null, id);    
+    }
     const playerVote = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"] > .quick-vote-result`)
     if(playerVote) playerVote.remove();
   }   
@@ -191,8 +223,8 @@ showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     await this.socket.executeForEveryone(this.sendBuildCheckForEveryone);
     
     //send to everyone
-   //Saw wood 3.wav https://freesound.org/people/Pagey1969/sounds/566040/
     const soundVolume = game.settings.get("fvtt-quick-vote", "voteWarningSoundVolume");
+    //Saw wood 3.wav https://freesound.org/people/Pagey1969/sounds/566040/
     const mySound = game.settings.get("fvtt-quick-vote", "buildingSoundPath");     
     foundry.audio.AudioHelper.play({
       src: mySound,

@@ -366,7 +366,14 @@ Hooks.on("getSceneControlButtons", controls => {
 });
 
 
-Hooks.on("ready", async function() {
-  //reset all votes for a clean start
-  await window.game.quickVoter.resetVotes();
+Hooks.on("renderPlayers", async function() {
+  ui.notifications.notify("Quick Vote | Player List Rendered!");
+  // Find all users who have an active vote
+  const v = Array.from(game.settings.storage.get("user")).filter(s=>(s.key==="fvtt-quick-vote.userVote" && s.value !== null) );
+  // Accurately display the vote status
+  v.forEach(v=> {
+    //console.log(v,"Quick Vote | Existing vote found!") 
+    window.game.quickVoter.addVoteElement(v.user,v.value);
+  });
+
 });
