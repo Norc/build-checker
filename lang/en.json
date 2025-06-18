@@ -9,6 +9,7 @@
         "CHATMESSAGE.votedNo": " voted No!",
         "CHATMESSAGE.votedOther": " voted for the Other option!",
         "CHATMESSAGE.votedBuilding": " is Building!",    
+        "CHATMESSAGE.votedBuildingShort": "Building!",      
     
         "settings": {
             "showuinotification": {

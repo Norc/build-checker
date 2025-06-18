@@ -298,7 +298,7 @@ Hooks.once('init', function() {
     scope: 'world',
     config: true,
     //TODO: should eventually show this: <div class="icon-" style="font-family: icomoon;">build-pick</div>
-    default: "Building! 🔨", //I don't really like the hammer alone. TODO: make Building! a fallback default option?
+    default: "🔨", //I don't really like the hammer alone. TODO: make Building! a fallback default option?
     type: String,
     filePicker: false,
     requiresReload: false
@@ -372,7 +372,8 @@ Hooks.on("renderPlayers", async function() {
   // Accurately display the vote status
   v.forEach(v=> {
     //console.log(v,"Quick Vote | Existing vote found!") 
-    window.game.quickVoter.addVoteElement(v.user,v.value);
+    const voteChar = window.game.quickVoter.getVoteChar(v.value);
+    window.game.quickVoter.addVoteElement(v.user,voteChar);
   });
 
 });

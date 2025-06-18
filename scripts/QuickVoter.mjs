@@ -8,8 +8,9 @@ export default class QuickVoter {
     this.moduleName = "fvtt-quick-vote";
 
     // socketlib
-    this.socket = socketlib.registerModule(this.moduleName);       	
-  	this.socket.register("sendNotification", this.sendNotification); 
+    this.socket = socketlib.registerModule(this.moduleName);      
+    this.socket.register("sendSimpleNotification", this.sendSimpleNotification); 	
+  	this.socket.register("sendVoteNotification", this.sendVoteNotification); 
     this.socket.register("showVoteForEveryone", this.showVoteForEveryone);       // SHOW VOTE INDICATOR FOR EVERYONE
     this.socket.register("removeVoteForEveryone", this.removeVoteForEveryone);   // REMOVE VOTE INDICATOR FOR EVERYONE
     this.socket.register("sendBuildCheckForEveryone", this.sendBuildCheckForEveryone);           
@@ -25,7 +26,8 @@ export default class QuickVoter {
 
     //If the vote is the same as the previously chosen option, remove the current vote instead and exit
     //This allows voting for the same thing again to toggle off the vote
-    console.log(chosenVote, prevVote);
+    console.log(`Quick Vote | Current vote for ${game.users.get(id).name} is ${chosenVote}`);
+    console.log(`Quick Vote | Previous vote for ${game.users.get(id).name} was ${prevVote}`);
     if(prevVote !== null) await this.removeVote(id);
     if (chosenVote === prevVote) return;
 
@@ -35,7 +37,7 @@ export default class QuickVoter {
 
     // Find the appropriate user-facing label for the chosen vote option
     let voteChar = await this.getVoteChar(chosenVote);
- 
+
     //TODO: record the vote for this individual user in the system data model
     this.socket.executeForEveryone(this.showVoteForEveryone, id, voteChar);               
     
@@ -45,7 +47,7 @@ export default class QuickVoter {
       //Show the notification, except if the vote is "No" and "No" votes shouldn't show notifications
       const notifyOnNo = game.settings.get(this.moduleName, "notifyOnVoteNo");
       if ( !(notifyOnNo === false && chosenVote === "votedNo") ) {
-       this.socket.executeForEveryone(this.sendNotification, player, chosenVote);
+       this.socket.executeForEveryone(this.sendVoteNotification, player, voteChar, chosenVote);
       }              
     } 
 
@@ -66,7 +68,7 @@ export default class QuickVoter {
         }
         message += `<label class="title" style="font-size:1.5rem; color: #b02b2e;">${player.name}</label></br><label style="font-size: 15px">${game.i18n.localize("fvtt-quick-vote.CHATMESSAGE")}</label><p><img style="vertical-align:middle" src="${imagePath}" width="${chatImageWidth}%"></p>`; 
       } else { */
-        message += `${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenVote}`); 
+        message += `${voteChar} ${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenVote}`); 
       //} 
       chatData = {
         speaker: null,
@@ -133,6 +135,10 @@ export default class QuickVoter {
   // Remove Previous Vote
   async removeVote(id) {
     console.log(`Quick Vote | Attempting to remove a vote for ${id}`)
+    if (game.settings.get("fvtt-quick-vote", "userVote", id) !==null) {
+      console.log(`Quick Vote | Removing a vote from user ${id}`)
+      await game.settings.set("fvtt-quick-vote", "userVote", null, id);    
+    }
     this.socket.executeForEveryone(this.removeVoteForEveryone, id);              
   }
 
@@ -160,44 +166,40 @@ export default class QuickVoter {
   }
 
 
-  async addVoteElement(id, chosenVote) {
+  async addVoteElement(id, voteChar) {
     const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"]`);
     const e = document.createElement('span');
     e.classList.add('quick-vote-result');
-    e.textContent = await this.getVoteChar(chosenVote);
+    e.textContent = ( voteChar === game.settings.get("fvtt-quick-vote","voteBuildingChar") ) ? `${game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.votedBuildingShort`)} ${voteChar}` : voteChar 
     playerLine.append(e);
   }
 
-  sendNotification(player,chosenVote) {    
+  sendSimpleNotification(message) {
+    ui.notifications.notify(message);
+  }
+
+  sendVoteNotification(player,voteChar,chosenVote) {    
     //TODO: localize
-    ui.notifications.notify( `${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenVote}`) ); 
+    ui.notifications.notify(`${voteChar} ${player.name} ` + game.i18n.localize(`fvtt-quick-vote.CHATMESSAGE.${chosenVote}`) ); 
   }   
 
   sendBuildCheckForEveryone() {
     ui.notifications.notify("Are you building? Press 'B' or 'N'");
   }
 
-  showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
-    const playerLine = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"]`);
-
+  async showVoteForEveryone(id, voteChar) {       //THIS WILL ADD THE VOTE INDICATOR
     //TODO: add config setting for vote text for each possibility
-    let v = document.createElement('span');
-    v.classList.add('quick-vote-result');
-    v.textContent = ` ${voteChar}`;
-    playerLine.append(v);
+    await window.game.quickVoter.addVoteElement(id, voteChar);
   }   
 
   async removeVoteForEveryone(id) {     //THIS WILL REMOVE THE VOTE INDICATOR IF ONE IS PRESENT
-    if (game.settings.get("fvtt-quick-vote", "userVote", id) !==null) {
-      console.log(`Quick Vote | Removing a vote from user ${id}`)
-      await game.settings.set("fvtt-quick-vote", "userVote", null, id);    
-    }
     const playerVote = document.querySelector(`#players-active ol.players-list > li[data-user-id="${id}"] > .quick-vote-result`)
     if(playerVote) playerVote.remove();
   }   
   
   async voteComplete() {
-      this.socket.executeForEveryone(ui.notifications.notify("Quick Vote | Everyone has voted!"));
+      //TODO: Localize
+      this.socket.executeForEveryone(this.sendSimpleNotification, "Everyone has voted!");
   }
 
   // 
