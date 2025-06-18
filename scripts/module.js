@@ -303,6 +303,20 @@ Hooks.once('init', function() {
     filePicker: false,
     requiresReload: false
   }); 
+
+  //records the current vote for each use
+  game.settings.register(moduleName, 'userVote', {
+    //TODO: Localize
+    name: 'userVote', 
+    hint: "The current vote for this user.", // B for testing purposes
+    scope: 'user',
+    config: false,
+    default: null, 
+    type: String,
+    filePicker: false,
+    requiresReload: false
+  }); 
+
 });
 
 
@@ -352,7 +366,7 @@ Hooks.on("getSceneControlButtons", controls => {
 });
 
 
-//Hooks.on("ready", async function() {
+Hooks.on("ready", async function() {
   //reset all votes for a clean start
-  //await window.game.quickVoter.resetVotes();
-//});
+  await window.game.quickVoter.resetVotes();
+});
