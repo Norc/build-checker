@@ -369,15 +369,13 @@ Hooks.on("getSceneControlButtons", controls => {
 Hooks.on("renderPlayers", async function() {
   // Find all users who have an active vote
   const v = Array.from(game.settings.storage.get("user")).filter(s=>(s.key==="fvtt-quick-vote.userVote" && s.value !== null) );
-  // Accurately display the vote status
-  v.forEach(v=> {
+  // Accurately display the current vote status
+  v.forEach(async v=> {
     //console.log(v,"Quick Vote | Existing vote found!") 
-    const voteChar = window.game.quickVoter.getVoteChar(v.value);
-    window.game.quickVoter.addVoteElement(v.user,voteChar);
+    const voteChar = await window.game.quickVoter.getVoteChar(v.value);
+    await window.game.quickVoter.addVoteElement(v.user,voteChar);
   });
 
 });
 
- Hooks.on("fvttQuickVoteComplete", async function() {
-  await window.game.quickVoter.voteComplete();
- });
+ Hooks.on("fvttQuickVoteComplete", async () => await window.game.quickVoter.voteComplete() );
