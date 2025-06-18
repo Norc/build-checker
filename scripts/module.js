@@ -367,7 +367,6 @@ Hooks.on("getSceneControlButtons", controls => {
 
 
 Hooks.on("renderPlayers", async function() {
-  ui.notifications.notify("Quick Vote | Player List Rendered!");
   // Find all users who have an active vote
   const v = Array.from(game.settings.storage.get("user")).filter(s=>(s.key==="fvtt-quick-vote.userVote" && s.value !== null) );
   // Accurately display the vote status
@@ -377,3 +376,7 @@ Hooks.on("renderPlayers", async function() {
   });
 
 });
+
+ Hooks.on("fvttQuickVoteComplete", async function() {
+  await window.game.quickVoter.voteComplete();
+ });

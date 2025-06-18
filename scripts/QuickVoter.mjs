@@ -111,7 +111,10 @@ export default class QuickVoter {
   console.log(players);
   console.log(players.length);
 
-  if (votes.length === players.length) ui.notifications.notify("Quick Vote | Everyone has voted!");
+  if (votes.length === players.length) {
+   await Hooks.callAll("fvttQuickVoteComplete");
+  }
+ 
 
   } // vote end ----------------------------------
   
@@ -193,6 +196,10 @@ export default class QuickVoter {
     if(playerVote) playerVote.remove();
   }   
   
+  async voteComplete() {
+      this.socket.executeForEveryone(ui.notifications.notify("Quick Vote | Everyone has voted!"));
+  }
+
   // 
   async getDimensions(path) {
     const fileExtension = path.split('.').pop();     
